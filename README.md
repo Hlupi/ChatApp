@@ -1,6 +1,6 @@
 # Shat App
 
-This is a React Native chat app build as a part of the Codaiseeur Academy. 
+This is a React Native chat app build as a part of the Codaiseeur Academy programme. 
 
 ### Instructions 
 - clone/download the repo
