@@ -1,4 +1,3 @@
-// See: https://github.com/gcanti/tcomb-form-native
 import t from 'tcomb-form-native';
 
 const User = t.struct({

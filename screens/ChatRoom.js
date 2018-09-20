@@ -1,17 +1,11 @@
 import React, { Component } from 'react';
-import ReactNative, {
-  View,
-  ScrollView,
-  KeyboardAvoidingView,
-  TouchableHighlight,
-  Text,
-} from 'react-native';
+import ReactNative, { View, ScrollView, KeyboardAvoidingView, TouchableHighlight, Text, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-// See: https://github.com/gcanti/tcomb-form-native
 import t from 'tcomb-form-native';
 import ChatMessage, { formOptions } from '../models/ChatMessage';
 import loadUser from '../actions/users/load';
+import subscribeToUsers from '../actions/users/subscribe';
 import subscribeToMessages from '../actions/messages/subscribe';
 import postMessage from '../actions/messages/post';
 import styles from './ChatRoom.styles';
@@ -22,6 +16,7 @@ class ChatRoom extends Component {
 
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.renderMessage = this.renderMessage.bind(this);
 
     this.state = { message: null, textFieldHeight: 36 };
   }
@@ -29,6 +24,7 @@ class ChatRoom extends Component {
   componentWillMount() {
     this.props.loadUser();
     this.props.subscribeToMessages();
+    this.props.subscribeToUsers();
   }
 
   clearForm() {
@@ -53,6 +49,24 @@ class ChatRoom extends Component {
     this.clearForm();
   }
 
+  renderMessage(message, index) {
+    const { users } = this.props
+    const author = users.filter((u) => (u._id === message.authorId))[0];
+    console.log(author)
+
+    return (
+      <View ref={`msg${index}`} key={index} style={styles.message}>
+        <Image
+          style={styles.avatar}
+          source={{uri: (author && author.gravatar) || 'https://unsplash.it/50/50' }} />
+        <View>
+          <Text style={styles.author}>{message.author}</Text>
+          <Text style={styles.text}>{message.text}</Text>
+        </View>
+      </View>
+    );
+  }
+
   render() {
     const Form = t.form.Form;
     let normal = { ...Form.stylesheet.textbox.normal };
@@ -68,7 +82,7 @@ class ChatRoom extends Component {
 
     console.log(messageFormOptions)
 
-    const { user, loading } = this.props;
+    const { user, loading, messages } = this.props;
 
     return (
       <View style={styles.outerContainer}>
@@ -78,13 +92,13 @@ class ChatRoom extends Component {
           <Text style={styles.title}>Chat Room</Text>
           { user && user.error ? <Text style={styles.error}>{user.error.name} { user.error.message }</Text> : null }
 
-          <ScrollView ref="scrollView">
-            { this.props.messages.map((message, index) => (
-              <View ref={`msg${index}`} key={index} style={styles.message}>
-                <Text style={styles.author}>{message.author}</Text>
-                <Text style={styles.text}>{message.text}</Text>
-              </View>
-            ))}
+          <ScrollView
+            ref = { (ref) => { this.scrollView = ref } }
+            onContentSizeChange = { (contentWidth, contentHeight) => {
+              this.scrollView.scrollToEnd({
+                animated: true
+              })}} >
+            { messages.map(this.renderMessage)}
           </ScrollView>
 
           <View>
@@ -110,6 +124,6 @@ class ChatRoom extends Component {
   }
 }
 
-const mapStateToProps = ({ user, loading, messages }) => ({ user, loading, messages });
+const mapStateToProps = ({ user, loading, messages, users }) => ({ user, loading, messages, users });
 
-export default connect(mapStateToProps, { loadUser, postMessage, subscribeToMessages })(ChatRoom);
+export default connect(mapStateToProps, { loadUser, postMessage, subscribeToMessages, subscribeToUsers })(ChatRoom);

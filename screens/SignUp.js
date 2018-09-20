@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import ReactNative, { View, KeyboardAvoidingView, Text, TouchableHighlight } from 'react-native';
-import styles from './SignUp.styles';
-import t from 'tcomb-form-native';
-import Person, { formOptions } from '../models/Person';
-import signUp from '../actions/users/sign-up';
+import ReactNative, { View, KeyboardAvoidingView, TouchableHighlight, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
+import t from 'tcomb-form-native';
+import Person, { formOptions } from '../models/Person';
+import loadUser from '../actions/users/load';
+import signUp from '../actions/users/sign-up';
+import styles from './SignUp.styles';
 
 class SignUp extends Component {
   constructor(props) {
@@ -37,21 +38,20 @@ class SignUp extends Component {
     // REMOVE
     console.log(newUser);
     this.props.signUp(newUser);
-    this.clearForm();
   }
 
 
   render() {
     const Form = t.form.Form;
-    const { loading } = this.props;
+    const { user, loading } = this.props;
 
     return (
       <View style={styles.outerContainer}>
         <KeyboardAvoidingView
           behavior='padding'
           styles={styles.container}>
-
           <Text style={styles.title}>Sign up for ShatApp</Text>
+          { user && user.error ? <Text style={styles.error}>{user.error.name} { user.error.message }</Text> : null }
 
           <Form
             ref="form"
@@ -61,7 +61,8 @@ class SignUp extends Component {
             onChange={this.onChange} />
 
           <TouchableHighlight
-            style={styles.button}
+            disabled={loading}
+            style={styles.buttonPrimary}
             onPress={this.onSubmit}
             underlayColor='#99d9f4'>
             <Text style={styles.buttonText}>Sign up</Text>
@@ -69,7 +70,7 @@ class SignUp extends Component {
 
           <TouchableHighlight
             disabled={loading}
-            style={styles.buttonPrimary}
+            style={styles.buttonSecondary}
             onPress={Actions.signIn}
             underlayColor='#99d9f4'
           >
@@ -81,6 +82,6 @@ class SignUp extends Component {
   }
 }
 
-const mapStateToProps = ({ loading }) => ({ loading });
+const mapStateToProps = ({ user, loading }) => ({ user, loading });
 
-export default connect(mapStateToProps, { signUp })(SignUp);
+export default connect(mapStateToProps, { loadUser, signUp })(SignUp);

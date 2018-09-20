@@ -1,13 +1,7 @@
 import React, { Component } from 'react';
-import ReactNative, {
-  View,
-  KeyboardAvoidingView,
-  TouchableHighlight,
-  Text,
-} from 'react-native';
+import ReactNative, { View, KeyboardAvoidingView, TouchableHighlight, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-// See: https://github.com/gcanti/tcomb-form-native
 import t from 'tcomb-form-native';
 import User, { formOptions } from '../models/User';
 import loadUser from '../actions/users/load';
@@ -29,9 +23,18 @@ class SignIn extends Component {
   }
 
   componentDidMount() {
-    // focus on the "email" field
     this.refs.form.getComponent('email').refs.input.focus();
   }
+
+  // componentDidUpdate() {
+  //   if (this.props.user && this.props.user._id) {
+  //     try {
+  //       Actions.chatRoom();
+  //     } catch(e) {
+  //       console.log('wait...')
+  //     }
+  //   }
+  // }
 
   onChange(user) {
     this.setState({ user });
