@@ -8,4 +8,4 @@ This is a React Native chat app build as a part of the Codaiseeur Academy.
 - `yarn start` to start the app
 - install [Expo](https://github.com/expo/expo) on your mobile device
 
-![example](https://media.giphy.com/media/2wS8EkumbtmqtqVmOm/giphy.gif)
+![example](https://media.giphy.com/media/SqdB6aOJ11mwNBsr4r/giphy.gif)
